@@ -1,6 +1,7 @@
 package com.excilys.katatrain.domain.services;
 
 import com.excilys.katatrain.domain.core.Reservation;
+import com.excilys.katatrain.domain.services.TicketService.ReservationRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,7 +12,7 @@ public class TicketServiceTest {
 
     @Test
     public void should_reserve_seats_when_unreserved_seats_are_available() {
-        Reservation reservation = ticketService.reserve(3, "TGV2611");
+        Reservation reservation = ticketService.reserve(ReservationRequest.of(3, "TGV2611"));
         assertThat(reservation).isNotNull();
     }
 

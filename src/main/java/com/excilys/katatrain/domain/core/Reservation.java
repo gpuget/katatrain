@@ -6,16 +6,16 @@ import java.util.Set;
 
 public class Reservation {
     private final String trainId;
-    private final String bookingReference;
+    private final BookingReference bookingReference;
     private final Set<Seat> seats;
 
-    private Reservation(String trainId, String bookingReference, Set<Seat> seats) {
+    private Reservation(String trainId, BookingReference bookingReference, Set<Seat> seats) {
         this.trainId = trainId;
         this.bookingReference = bookingReference;
         this.seats = seats;
     }
 
-    public static Reservation of(String trainId, String bookingReference, Set<Seat> seats) {
+    public static Reservation with(String trainId, BookingReference bookingReference, Set<Seat> seats) {
         return new Reservation(trainId, bookingReference, Collections.unmodifiableSet(seats));
     }
 
