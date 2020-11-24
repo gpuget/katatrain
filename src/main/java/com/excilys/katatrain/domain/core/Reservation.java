@@ -33,4 +33,13 @@ public class Reservation {
     public int hashCode() {
         return Objects.hash(trainId, bookingReference, seats);
     }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "trainId='" + trainId + '\'' +
+                ", bookingReference=" + bookingReference +
+                ", seats=" + seats +
+                '}';
+    }
 }

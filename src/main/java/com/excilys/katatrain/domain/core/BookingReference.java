@@ -11,7 +11,7 @@ public class BookingReference {
         this.reference = reference;
     }
 
-    public static BookingReference from(String reference) {
+    public static BookingReference of(String reference) {
         Objects.requireNonNull(reference);
         return new BookingReference(reference);
     }
@@ -31,5 +31,10 @@ public class BookingReference {
     @Override
     public int hashCode() {
         return Objects.hash(reference);
+    }
+
+    @Override
+    public String toString() {
+        return reference;
     }
 }
