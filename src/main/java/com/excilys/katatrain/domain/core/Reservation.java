@@ -1,5 +1,6 @@
 package com.excilys.katatrain.domain.core;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class Reservation {
     }
 
     public static Reservation of(String trainId, String bookingReference, Set<Seat> seats) {
-        return new Reservation(trainId, bookingReference, seats);
+        return new Reservation(trainId, bookingReference, Collections.unmodifiableSet(seats));
     }
 
     @Override
