@@ -1,13 +1,18 @@
 package com.excilys.katatrain.domain.services;
 
+import com.excilys.katatrain.domain.core.Reservation;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TicketServiceTest {
+    private TicketService ticketService = new TicketService();
+
     @Test
     public void should_reserve_seats_when_unreserved_seats_are_available() {
-        fail("Not implemented yet.");
+        Reservation reservation = ticketService.reserve(3, "TGV2611");
+        assertThat(reservation).isNotNull();
     }
 
     @Test
