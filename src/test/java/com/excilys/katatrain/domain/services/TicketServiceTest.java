@@ -64,7 +64,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void should_not_reserve_when_train_is_full() throws ReservationException {
+    public void should_not_reserve_when_train_is_full() {
         // GIVEN
         String trainId = "TGV2611";
         int numberOfSeats = 2;
@@ -78,35 +78,31 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void should_not_reserve_when_not_enough_available_seats() throws ReservationException {
+    public void should_not_reserve_when_not_enough_available_seats() {
         // GIVEN
         String trainId = "TGV2611";
         int numberOfSeats = 2;
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 1, 0);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
 
-        // WHEN
-        Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
-
-        // THEN
-        assertThat(reservation).isNotNull();
-        assertThat(reservation.numberOfSeats()).isZero();
+        // WHEN THEN
+        assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
+                .isInstanceOf(ReservationException.class)
+                .hasMessageContaining("Not satisfied reservation");
     }
 
     @Test
-    public void should_not_reserve_when_not_enough_unreserved_seats() throws ReservationException {
+    public void should_not_reserve_when_not_enough_unreserved_seats() {
         // GIVEN
         String trainId = "TGV2611";
         int numberOfSeats = 2;
-        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 8);
+        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 9);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
 
-        // WHEN
-        Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
-
-        // THEN
-        assertThat(reservation).isNotNull();
-        assertThat(reservation.numberOfSeats()).isZero();
+        // WHEN THEN
+        assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
+                .isInstanceOf(ReservationException.class)
+                .hasMessageContaining("Not satisfied reservation");
     }
 
     @Test
