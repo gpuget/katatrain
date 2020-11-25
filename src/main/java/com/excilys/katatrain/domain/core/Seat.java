@@ -21,7 +21,7 @@ public class Seat {
         return create(number, coach, BookingReference.none());
     }
 
-    private static Seat create(int number, String coach, BookingReference bookingReference) {
+    static Seat create(int number, String coach, BookingReference bookingReference) {
         checkNumber(number);
         Objects.requireNonNull(coach);
         Objects.requireNonNull(bookingReference);

@@ -1,6 +1,7 @@
 package com.excilys.katatrain.domain.core;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 public class ReservationSuggestion {
@@ -27,7 +28,24 @@ public class ReservationSuggestion {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReservationSuggestion that = (ReservationSuggestion) o;
+        return numberOfSeatsToReserve == that.numberOfSeatsToReserve &&
+                Objects.equals(trainId, that.trainId) &&
+                Objects.equals(seats, that.seats);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numberOfSeatsToReserve, trainId, seats);
+    }
+
+    @Override
     public String toString() {
-        return "Train [" + this.trainId + "]: " + this.seats.size() + '/' + this.numberOfSeatsToReserve;
+        return "Train (" + this.trainId + "): " +
+                this.seats.size() + '/' + this.numberOfSeatsToReserve + " " +
+                this.seats;
     }
 }
