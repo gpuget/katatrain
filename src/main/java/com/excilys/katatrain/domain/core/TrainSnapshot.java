@@ -16,6 +16,9 @@ public class TrainSnapshot {
     }
 
     public Set<Seat> getUnreservedSeats(int numberOfSeats) {
-        return this.seats.stream().limit(numberOfSeats).collect(Collectors.toSet());
+        return this.seats.stream()
+                .filter(Seat::isNotReserved)
+                .limit(numberOfSeats)
+                .collect(Collectors.toSet());
     }
 }

@@ -5,16 +5,27 @@ import java.util.Objects;
 public class Seat {
     private final int number;
     private final String coach;
+    private final BookingReference bookingReference;
 
-    private Seat(int number, String coach) {
+    private Seat(int number, String coach, BookingReference bookingReference) {
         this.number = number;
         this.coach = coach;
+        this.bookingReference = bookingReference;
     }
 
-    public static Seat of(int number, String coach) {
+    public static Seat reserved(int number, String coach, BookingReference bookingReference) {
+        return of(number, coach, bookingReference);
+    }
+
+    public static Seat unreserved(int number, String coach) {
+        return of(number, coach, BookingReference.none());
+    }
+
+    private static Seat of(int number, String coach, BookingReference bookingReference) {
         checkNumber(number);
         Objects.requireNonNull(coach);
-        return new Seat(number, coach);
+        Objects.requireNonNull(bookingReference);
+        return new Seat(number, coach, bookingReference);
     }
 
     private static int checkNumber(int number) {
@@ -23,6 +34,14 @@ public class Seat {
         }
 
         return number;
+    }
+
+    public boolean isNotReserved() {
+        return BookingReference.none().equals(this.bookingReference);
+    }
+
+    public boolean isReserved() {
+        return !isNotReserved();
     }
 
     @Override

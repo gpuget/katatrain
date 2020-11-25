@@ -11,9 +11,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -27,20 +32,36 @@ public class TicketServiceTest {
     private TicketService ticketService;
 
     private static TrainSnapshot emptyTrainSnapshot(int numberOfSeats) {
-        Set<Seat> unreservedSeats = IntStream.rangeClosed(1, numberOfSeats).mapToObj(i -> Seat.of(i, "A")).collect(Collectors.toSet());
-        return TrainSnapshot.from(unreservedSeats);
+        return trainSnapshot(numberOfSeats, 0);
+    }
+
+    private static TrainSnapshot trainSnapshot(int numberOfSeats, int numberOfReserved) {
+        Set<Seat> reservedSeats = IntStream.rangeClosed(1, numberOfReserved)
+                .mapToObj(i -> Seat.reserved(i, "A", BookingReference.of("XCLSDDD")))
+                .collect(Collectors.toSet());
+        Set<Seat> unreservedSeats = IntStream.rangeClosed(numberOfReserved + 1, numberOfSeats)
+                .mapToObj(i -> Seat.unreserved(i, "A"))
+                .collect(Collectors.toSet());
+        return TrainSnapshot.from(Stream.of(reservedSeats, unreservedSeats)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet()));
     }
 
     @Test
     public void should_reserve_seats_when_unreserved_seats_are_available() {
+        // GIVEN
         String trainId = "TGV2611";
+        TrainSnapshot trainSnapshot = emptyTrainSnapshot(10);
         BookingReference bookingReference = BookingReference.none();
-        Set<Seat> seats = Set.of(Seat.of(1, "A"), Seat.of(2, "A"), Seat.of(3, "A"));
+        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+
+        Set<Seat> seats = Set.of(Seat.unreserved(1, "A"), Seat.unreserved(2, "A"));
         Reservation expectedReservation = Reservation.with(trainId, bookingReference, seats);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(emptyTrainSnapshot(3));
 
-        Reservation reservation = this.ticketService.reserve(3, trainId);
+        // WHEN
+        Reservation reservation = this.ticketService.reserve(2, trainId);
 
+        // THEN
         assertThat(reservation).isNotNull();
         assertThat(reservation).isEqualTo(expectedReservation);
     }
