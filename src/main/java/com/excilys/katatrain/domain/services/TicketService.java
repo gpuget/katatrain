@@ -5,16 +5,19 @@ import com.excilys.katatrain.domain.core.Reservation;
 import com.excilys.katatrain.domain.core.ReservationSuggestion;
 import com.excilys.katatrain.domain.core.TrainSnapshot;
 import com.excilys.katatrain.domain.core.exceptions.ReservationException;
+import com.excilys.katatrain.domain.ports.BookingReferenceProvider;
 import com.excilys.katatrain.domain.ports.TrainDataProvider;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public class TicketService {
     private final TrainDataProvider trainDataProvider;
+    private final BookingReferenceProvider bookingReferenceProvider;
 
-    public TicketService(TrainDataProvider trainDataProvider) {
-        Objects.requireNonNull(trainDataProvider);
-        this.trainDataProvider = trainDataProvider;
+    public TicketService(TrainDataProvider trainDataProvider, BookingReferenceProvider bookingReferenceProvider) {
+        this.trainDataProvider = requireNonNull(trainDataProvider);
+        this.bookingReferenceProvider = requireNonNull(bookingReferenceProvider);
+
     }
 
     public Reservation reserve(int numberOfSeats, String trainId) throws ReservationException {
@@ -26,7 +29,8 @@ public class TicketService {
 
         ReservationSuggestion suggestion = trainSnapshot.search(numberOfSeats);
         if (suggestion.isFullfilled()) {
-            Reservation reservation = suggestion.confirm(BookingReference.none());
+            BookingReference bookingReference = this.bookingReferenceProvider.get();
+            Reservation reservation = suggestion.confirm(bookingReference);
             this.trainDataProvider.register(reservation);
             return reservation;
         }

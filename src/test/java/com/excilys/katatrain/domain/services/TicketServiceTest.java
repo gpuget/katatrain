@@ -5,6 +5,7 @@ import com.excilys.katatrain.domain.core.Reservation;
 import com.excilys.katatrain.domain.core.Seat;
 import com.excilys.katatrain.domain.core.TrainSnapshot;
 import com.excilys.katatrain.domain.core.exceptions.ReservationException;
+import com.excilys.katatrain.domain.ports.BookingReferenceProvider;
 import com.excilys.katatrain.domain.ports.TrainDataProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -31,12 +32,14 @@ import static org.mockito.Mockito.*;
 public class TicketServiceTest {
     @Mock
     private TrainDataProvider trainDataProvider;
+    @Mock
+    private BookingReferenceProvider bookingReferenceProvider;
     @InjectMocks
     private TicketService ticketService;
 
     @AfterEach
     public void tearDown() {
-        verifyNoMoreInteractions(this.trainDataProvider);
+        verifyNoMoreInteractions(this.trainDataProvider, this.bookingReferenceProvider);
     }
 
     private static TrainSnapshot trainSnapshot(String trainId, int numberOfSeats, int numberOfReserved) {
@@ -56,10 +59,12 @@ public class TicketServiceTest {
     @Test
     public void should_reserve_seats_when_unreserved_seats_are_available() throws ReservationException {
         // GIVEN
-        String trainId = "TGV2611";
         int numberOfSeats = 2;
-        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 3);
+        String trainId = "TGV2611";
+        BookingReference bookingReference = BookingReference.from("XCLSDDD");
+        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 0);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.bookingReferenceProvider.get()).thenReturn(bookingReference);
 
         // WHEN
         Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
@@ -73,8 +78,8 @@ public class TicketServiceTest {
     @Test
     public void should_not_reserve_when_train_is_full() {
         // GIVEN
-        String trainId = "TGV2611";
         int numberOfSeats = 2;
+        String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 10);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
 
@@ -87,8 +92,8 @@ public class TicketServiceTest {
     @Test
     public void should_not_reserve_when_not_enough_available_seats() {
         // GIVEN
-        String trainId = "TGV2611";
         int numberOfSeats = 2;
+        String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 1, 0);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
 
@@ -101,8 +106,8 @@ public class TicketServiceTest {
     @Test
     public void should_not_reserve_when_not_enough_unreserved_seats() {
         // GIVEN
-        String trainId = "TGV2611";
         int numberOfSeats = 2;
+        String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 9);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
 
@@ -115,8 +120,8 @@ public class TicketServiceTest {
     @Test
     public void should_throw_exception_if_try_to_reserve_zero_seat() {
         // GIVEN
-        String trainId = "TGV2611";
         int numberOfSeats = 0;
+        String trainId = "TGV2611";
 
         // WHEN THEN
         assertThrows(IllegalArgumentException.class, () -> this.ticketService.reserve(numberOfSeats, trainId));
@@ -129,18 +134,32 @@ public class TicketServiceTest {
     }
 
     @Test
-    @Disabled
-    public void should_retrieve_booking_reference_to_reserve() {
-        fail("Not implemented yet.");
+    public void should_retrieve_booking_reference_to_reserve() throws ReservationException {
+        // GIVEN
+        int numberOfSeats = 2;
+        String trainId = "TGV2611";
+        BookingReference bookingReference = BookingReference.from("XCLSDDD");
+        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 0);
+        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.bookingReferenceProvider.get()).thenReturn(bookingReference);
+        doNothing().when(this.trainDataProvider).register(any());
+
+        // WHEN
+        Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
+
+        // THEN
+        verify(this.bookingReferenceProvider).get();
     }
 
     @Test
     public void should_register_reservation_after_reserve() throws ReservationException {
         // GIVEN
-        String trainId = "TGV2611";
         int numberOfSeats = 2;
-        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 3);
+        String trainId = "TGV2611";
+        BookingReference bookingReference = BookingReference.from("XCLSDDD");
+        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 0);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.bookingReferenceProvider.get()).thenReturn(bookingReference);
 
         // WHEN
         Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
