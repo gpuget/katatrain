@@ -13,6 +13,9 @@ public class BookingReference {
 
     public static BookingReference from(String reference) {
         Objects.requireNonNull(reference);
+        if (reference.isBlank()) {
+            return NONE;
+        }
         return new BookingReference(reference);
     }
 

@@ -8,7 +8,6 @@ import com.excilys.katatrain.domain.core.exceptions.ReservationException;
 import com.excilys.katatrain.domain.ports.BookingReferenceProvider;
 import com.excilys.katatrain.domain.ports.TrainDataProvider;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +24,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -128,9 +126,17 @@ public class TicketServiceTest {
     }
 
     @Test
-    @Disabled
     public void should_not_reserve_when_train_exceeds_the_limit() {
-        fail("Not implemented yet.");
+        // GIVEN
+        int numberOfSeats = 2;
+        String trainId = "TGV2611";
+        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 6);
+        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+
+        // WHEN THEN
+        assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
+                .isInstanceOf(ReservationException.class)
+                .hasMessageContaining("Not satisfied reservation");
     }
 
     @Test

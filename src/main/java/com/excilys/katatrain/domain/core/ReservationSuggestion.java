@@ -19,6 +19,10 @@ public class ReservationSuggestion {
         return new ReservationSuggestion(numberOfSeatsToReserve, trainId, Collections.unmodifiableSet(seats));
     }
 
+    public static ReservationSuggestion none(int numberOfSeatsToReserve, String trainId) {
+        return create(numberOfSeatsToReserve, trainId, Collections.emptySet());
+    }
+
     public Reservation confirm(BookingReference bookingReference) {
         return Reservation.create(this.trainId, bookingReference, seats);
     }
