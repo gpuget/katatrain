@@ -22,7 +22,12 @@ public class ReservationSuggestion {
         return Reservation.create(this.trainId, bookingReference, seats);
     }
 
-    public boolean isSatisfied() {
+    public boolean isFullfilled() {
         return this.seats.size() == this.numberOfSeatsToReserve;
+    }
+
+    @Override
+    public String toString() {
+        return "Train [" + this.trainId + "]: " + this.seats.size() + '/' + this.numberOfSeatsToReserve;
     }
 }
