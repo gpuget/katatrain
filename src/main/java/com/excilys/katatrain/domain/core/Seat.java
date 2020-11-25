@@ -14,14 +14,14 @@ public class Seat {
     }
 
     public static Seat reserved(int number, String coach, BookingReference bookingReference) {
-        return of(number, coach, bookingReference);
+        return create(number, coach, bookingReference);
     }
 
     public static Seat unreserved(int number, String coach) {
-        return of(number, coach, BookingReference.none());
+        return create(number, coach, BookingReference.none());
     }
 
-    private static Seat of(int number, String coach, BookingReference bookingReference) {
+    private static Seat create(int number, String coach, BookingReference bookingReference) {
         checkNumber(number);
         Objects.requireNonNull(coach);
         Objects.requireNonNull(bookingReference);

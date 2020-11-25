@@ -11,7 +11,7 @@ public class BookingReference {
         this.reference = reference;
     }
 
-    public static BookingReference of(String reference) {
+    public static BookingReference from(String reference) {
         Objects.requireNonNull(reference);
         return new BookingReference(reference);
     }

@@ -5,20 +5,27 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TrainSnapshot {
+    private final String trainId;
     private final Set<Seat> seats;
 
-    private TrainSnapshot(Set<Seat> seats) {
+    private TrainSnapshot(String trainId, Set<Seat> seats) {
+        this.trainId = trainId;
         this.seats = seats;
     }
 
-    public static TrainSnapshot from(Set<Seat> seats) {
-        return new TrainSnapshot(Collections.unmodifiableSet(seats));
+    public static TrainSnapshot create(String trainId, Set<Seat> seats) {
+        return new TrainSnapshot(trainId, Collections.unmodifiableSet(seats));
     }
 
-    public Set<Seat> getUnreservedSeats(int numberOfSeats) {
+    public ReservationSuggestion search(int numberOfSeats) {
+        Set<Seat> limitedUnreservedSeats = unreservedSeats(numberOfSeats);
+        return ReservationSuggestion.create(numberOfSeats, this.trainId, limitedUnreservedSeats);
+    }
+
+    private Set<Seat> unreservedSeats(int number) {
         return this.seats.stream()
                 .filter(Seat::isNotReserved)
-                .limit(numberOfSeats)
+                .limit(number)
                 .collect(Collectors.toSet());
     }
 }

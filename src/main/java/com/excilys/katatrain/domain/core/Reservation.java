@@ -15,7 +15,7 @@ public class Reservation {
         this.seats = seats;
     }
 
-    public static Reservation with(String trainId, BookingReference bookingReference, Set<Seat> seats) {
+    public static Reservation create(String trainId, BookingReference bookingReference, Set<Seat> seats) {
         return new Reservation(trainId, bookingReference, Collections.unmodifiableSet(seats));
     }
 
