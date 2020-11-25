@@ -26,7 +26,9 @@ public class TicketService {
 
         ReservationSuggestion suggestion = trainSnapshot.search(numberOfSeats);
         if (suggestion.isFullfilled()) {
-            return suggestion.confirm(BookingReference.none());
+            Reservation reservation = suggestion.confirm(BookingReference.none());
+            this.trainDataProvider.register(reservation);
+            return reservation;
         }
 
         throw new ReservationException("Not satisfied reservation: " + suggestion);

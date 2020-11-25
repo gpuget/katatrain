@@ -6,6 +6,7 @@ import com.excilys.katatrain.domain.core.Seat;
 import com.excilys.katatrain.domain.core.TrainSnapshot;
 import com.excilys.katatrain.domain.core.exceptions.ReservationException;
 import com.excilys.katatrain.domain.ports.TrainDataProvider;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TicketServiceTest {
@@ -32,6 +33,11 @@ public class TicketServiceTest {
     private TrainDataProvider trainDataProvider;
     @InjectMocks
     private TicketService ticketService;
+
+    @AfterEach
+    public void tearDown() {
+        verifyNoMoreInteractions(this.trainDataProvider);
+    }
 
     private static TrainSnapshot trainSnapshot(String trainId, int numberOfSeats, int numberOfReserved) {
         Set<Seat> reservedSeats = IntStream.rangeClosed(1, numberOfReserved)
@@ -61,6 +67,7 @@ public class TicketServiceTest {
         // THEN
         assertThat(reservation).isNotNull();
         assertThat(reservation.numberOfSeats()).isEqualTo(numberOfSeats);
+        verify(this.trainDataProvider).register(reservation);
     }
 
     @Test
@@ -128,8 +135,17 @@ public class TicketServiceTest {
     }
 
     @Test
-    @Disabled
-    public void should_mark_seats_as_reserved_once_reserved() {
-        fail("Not implemented yet.");
+    public void should_register_reservation_after_reserve() throws ReservationException {
+        // GIVEN
+        String trainId = "TGV2611";
+        int numberOfSeats = 2;
+        TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 3);
+        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+
+        // WHEN
+        Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
+
+        // THEN
+        verify(this.trainDataProvider).register(reservation);
     }
 }
