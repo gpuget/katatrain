@@ -11,10 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,19 +48,16 @@ public class TicketServiceTest {
     public void should_reserve_seats_when_unreserved_seats_are_available() {
         // GIVEN
         String trainId = "TGV2611";
-        TrainSnapshot trainSnapshot = emptyTrainSnapshot(10);
-        BookingReference bookingReference = BookingReference.none();
+        int numberOfSeats = 2;
+        TrainSnapshot trainSnapshot = trainSnapshot(10, 3);
         when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
 
-        Set<Seat> seats = Set.of(Seat.unreserved(1, "A"), Seat.unreserved(2, "A"));
-        Reservation expectedReservation = Reservation.with(trainId, bookingReference, seats);
-
         // WHEN
-        Reservation reservation = this.ticketService.reserve(2, trainId);
+        Reservation reservation = this.ticketService.reserve(numberOfSeats, trainId);
 
         // THEN
         assertThat(reservation).isNotNull();
-        assertThat(reservation).isEqualTo(expectedReservation);
+        assertThat(reservation.numberOfSeats()).isEqualTo(numberOfSeats);
     }
 
     @Test

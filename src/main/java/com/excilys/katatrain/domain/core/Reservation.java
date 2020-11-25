@@ -19,6 +19,10 @@ public class Reservation {
         return new Reservation(trainId, bookingReference, Collections.unmodifiableSet(seats));
     }
 
+    public int numberOfSeats() {
+        return this.seats.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
