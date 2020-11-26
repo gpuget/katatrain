@@ -4,7 +4,7 @@ import com.excilys.katatrain.domain.core.Reservation;
 import com.excilys.katatrain.domain.core.exceptions.ReservationException;
 import com.excilys.katatrain.domain.services.TicketService;
 import com.excilys.katatrain.infra.controllers.dto.ReservationDto;
-import com.excilys.katatrain.infra.controllers.dto.TrainDto;
+import com.excilys.katatrain.infra.controllers.dto.ReservationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,9 +25,9 @@ public class TicketController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> performReservation(@RequestBody TrainDto trainDto) {
+    public ResponseEntity<?> performReservation(@RequestBody ReservationRequest reservationRequest) {
         try {
-            Reservation reservation = this.ticketService.reserve(trainDto.getSeats(), trainDto.getTrainId());
+            Reservation reservation = this.ticketService.reserve(reservationRequest.getSeats(), reservationRequest.getTrainId());
             return ResponseEntity.ok(ReservationDto.from(reservation));
         } catch (ReservationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
