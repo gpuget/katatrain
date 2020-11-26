@@ -1,9 +1,13 @@
 package com.excilys.katatrain.domain.core;
 
+import com.excilys.katatrain.domain.annotations.FactoryMethod;
+import com.excilys.katatrain.domain.annotations.ValueObject;
+
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
+@ValueObject
 public class Reservation {
     private final String trainId;
     private final BookingReference bookingReference;
@@ -15,12 +19,9 @@ public class Reservation {
         this.seats = seats;
     }
 
+    @FactoryMethod
     public static Reservation create(String trainId, BookingReference bookingReference, Set<Seat> seats) {
         return new Reservation(trainId, bookingReference, Collections.unmodifiableSet(seats));
-    }
-
-    public int numberOfSeats() {
-        return this.seats.size();
     }
 
     public String getTrainId() {

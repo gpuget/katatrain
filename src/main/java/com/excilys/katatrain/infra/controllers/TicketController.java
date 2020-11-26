@@ -24,11 +24,11 @@ public class TicketController {
         this.ticketService = ticketService;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> performReservation(@RequestBody ReservationRequest reservationRequest) {
         try {
             Reservation reservation = this.ticketService.reserve(reservationRequest.getSeats(), reservationRequest.getTrainId());
-            return ResponseEntity.ok(ReservationDto.from(reservation));
+            return ResponseEntity.ok(ReservationDto.map(reservation));
         } catch (ReservationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

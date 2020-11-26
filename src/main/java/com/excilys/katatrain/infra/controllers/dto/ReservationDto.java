@@ -2,16 +2,18 @@ package com.excilys.katatrain.infra.controllers.dto;
 
 import com.excilys.katatrain.domain.core.Reservation;
 import com.excilys.katatrain.domain.core.Seat;
+import com.excilys.katatrain.infra.annotations.DTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@DTO
 public class ReservationDto {
     private String trainId;
     private String bookingReference;
     private List<String> seats;
 
-    public static ReservationDto from(Reservation reservation) {
+    public static ReservationDto map(Reservation reservation) {
         ReservationDto dto = new ReservationDto();
         dto.trainId = reservation.getTrainId();
         dto.bookingReference = reservation.getBookingReference().toString();

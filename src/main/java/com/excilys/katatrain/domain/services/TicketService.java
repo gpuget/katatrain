@@ -1,5 +1,6 @@
 package com.excilys.katatrain.domain.services;
 
+import com.excilys.katatrain.domain.annotations.DomainService;
 import com.excilys.katatrain.domain.core.BookingReference;
 import com.excilys.katatrain.domain.core.Reservation;
 import com.excilys.katatrain.domain.core.ReservationSuggestion;
@@ -10,6 +11,7 @@ import com.excilys.katatrain.domain.ports.TrainDataProvider;
 
 import static java.util.Objects.requireNonNull;
 
+@DomainService
 public class TicketService {
     private final TrainDataProvider trainDataProvider;
     private final BookingReferenceProvider bookingReferenceProvider;
@@ -25,7 +27,7 @@ public class TicketService {
             throw new IllegalArgumentException("Reserve at least 1 seat");
         }
 
-        TrainSnapshot trainSnapshot = this.trainDataProvider.getTrain(trainId);
+        TrainSnapshot trainSnapshot = this.trainDataProvider.getTrainSnapshot(trainId);
 
         ReservationSuggestion suggestion = trainSnapshot.search(numberOfSeats);
         if (suggestion.isFullfilled()) {

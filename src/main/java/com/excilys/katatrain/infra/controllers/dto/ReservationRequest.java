@@ -1,5 +1,8 @@
 package com.excilys.katatrain.infra.controllers.dto;
 
+import com.excilys.katatrain.infra.annotations.DTO;
+
+@DTO
 public class ReservationRequest {
     private String trainId;
     private int seats;

@@ -6,6 +6,7 @@ import com.excilys.katatrain.domain.core.Seat;
 import com.excilys.katatrain.domain.core.TrainSnapshot;
 import com.excilys.katatrain.domain.ports.TrainDataProvider;
 import com.excilys.katatrain.external.services.TrainDataService;
+import com.excilys.katatrain.infra.annotations.Adapter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+@Adapter
 @Component
 public class TrainDataAdapter implements TrainDataProvider {
     private final TrainDataService trainDataService;
@@ -28,7 +30,7 @@ public class TrainDataAdapter implements TrainDataProvider {
     }
 
     @Override
-    public TrainSnapshot getTrain(String trainId) {
+    public TrainSnapshot getTrainSnapshot(String trainId) {
         String json = this.trainDataService.getTrain(trainId);
         return adapt(trainId, json);
     }
@@ -44,7 +46,7 @@ public class TrainDataAdapter implements TrainDataProvider {
                 seats.add(Seat.reserved(
                         seatNode.get("seat_number").asInt(),
                         seatNode.get("coach").asText(),
-                        BookingReference.from(seatNode.get("booking_reference").asText())));
+                        BookingReference.valueOf(seatNode.get("booking_reference").asText())));
             }
 
             return TrainSnapshot.create(trainId, seats);

@@ -1,26 +1,32 @@
 package com.excilys.katatrain.domain.core;
 
+import com.excilys.katatrain.domain.annotations.FactoryMethod;
+import com.excilys.katatrain.domain.annotations.ValueObject;
+
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
+@ValueObject
 public class ReservationSuggestion {
-    private final int numberOfSeatsToReserve;
+    private final int expectedNumber;
     private final String trainId;
     private final Set<Seat> seats;
 
-    private ReservationSuggestion(int numberOfSeatsToReserve, String trainId, Set<Seat> seats) {
-        this.numberOfSeatsToReserve = numberOfSeatsToReserve;
+    private ReservationSuggestion(int expectedNumber, String trainId, Set<Seat> seats) {
+        this.expectedNumber = expectedNumber;
         this.trainId = trainId;
         this.seats = seats;
     }
 
-    public static ReservationSuggestion create(int numberOfSeatsToReserve, String trainId, Set<Seat> seats) {
-        return new ReservationSuggestion(numberOfSeatsToReserve, trainId, Collections.unmodifiableSet(seats));
+    @FactoryMethod
+    public static ReservationSuggestion create(int expectedNumber, String trainId, Set<Seat> seats) {
+        return new ReservationSuggestion(expectedNumber, trainId, Collections.unmodifiableSet(seats));
     }
 
-    public static ReservationSuggestion none(int numberOfSeatsToReserve, String trainId) {
-        return create(numberOfSeatsToReserve, trainId, Collections.emptySet());
+    @FactoryMethod
+    public static ReservationSuggestion none(int expectedNumber, String trainId) {
+        return new ReservationSuggestion(expectedNumber, trainId, Collections.emptySet());
     }
 
     public Reservation confirm(BookingReference bookingReference) {
@@ -28,7 +34,7 @@ public class ReservationSuggestion {
     }
 
     public boolean isFullfilled() {
-        return this.seats.size() == this.numberOfSeatsToReserve;
+        return this.seats.size() == this.expectedNumber;
     }
 
     @Override
@@ -36,20 +42,18 @@ public class ReservationSuggestion {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReservationSuggestion that = (ReservationSuggestion) o;
-        return numberOfSeatsToReserve == that.numberOfSeatsToReserve &&
+        return expectedNumber == that.expectedNumber &&
                 Objects.equals(trainId, that.trainId) &&
                 Objects.equals(seats, that.seats);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(numberOfSeatsToReserve, trainId, seats);
+        return Objects.hash(expectedNumber, trainId, seats);
     }
 
     @Override
     public String toString() {
-        return "Train (" + this.trainId + "): " +
-                this.seats.size() + '/' + this.numberOfSeatsToReserve + " " +
-                this.seats;
+        return "Suggestion [" + this.trainId + "]: " + this.seats + " (" + this.seats.size() + '/' + ")";
     }
 }

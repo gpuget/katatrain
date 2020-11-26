@@ -14,6 +14,6 @@ public class ReservationTest extends ValueObjectTest<Reservation> {
 
     @Test
     public void numberOfSeats() {
-        assertThat(get().numberOfSeats()).isEqualTo(1);
+        assertThat(get().getSeats()).hasSize(1);
     }
 }

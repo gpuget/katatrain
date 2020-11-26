@@ -42,7 +42,7 @@ public class TicketServiceTest {
 
     private static TrainSnapshot trainSnapshot(String trainId, int numberOfSeats, int numberOfReserved) {
         Set<Seat> reservedSeats = IntStream.rangeClosed(1, numberOfReserved)
-                .mapToObj(i -> Seat.reserved(i, "A", BookingReference.from("XCLSDDD")))
+                .mapToObj(i -> Seat.reserved(i, "A", BookingReference.valueOf("XCLSDDD")))
                 .collect(Collectors.toSet());
         Set<Seat> unreservedSeats = (numberOfReserved < numberOfSeats)
                 ? IntStream.rangeClosed(numberOfReserved + 1, numberOfSeats)
@@ -59,9 +59,9 @@ public class TicketServiceTest {
         // GIVEN
         int numberOfSeats = 2;
         String trainId = "TGV2611";
-        BookingReference bookingReference = BookingReference.from("XCLSDDD");
+        BookingReference bookingReference = BookingReference.valueOf("XCLSDDD");
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 0);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
         when(this.bookingReferenceProvider.get()).thenReturn(bookingReference);
 
         // WHEN
@@ -69,7 +69,7 @@ public class TicketServiceTest {
 
         // THEN
         assertThat(reservation).isNotNull();
-        assertThat(reservation.numberOfSeats()).isEqualTo(numberOfSeats);
+        assertThat(reservation.getSeats()).hasSize(numberOfSeats);
         verify(this.trainDataProvider).register(reservation);
     }
 
@@ -79,7 +79,7 @@ public class TicketServiceTest {
         int numberOfSeats = 2;
         String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 10);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
 
         // WHEN THEN
         assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
@@ -93,7 +93,7 @@ public class TicketServiceTest {
         int numberOfSeats = 2;
         String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 1, 0);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
 
         // WHEN THEN
         assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
@@ -107,7 +107,7 @@ public class TicketServiceTest {
         int numberOfSeats = 2;
         String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 9);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
 
         // WHEN THEN
         assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
@@ -131,7 +131,7 @@ public class TicketServiceTest {
         int numberOfSeats = 2;
         String trainId = "TGV2611";
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 6);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
 
         // WHEN THEN
         assertThatThrownBy(() -> this.ticketService.reserve(numberOfSeats, trainId))
@@ -144,9 +144,9 @@ public class TicketServiceTest {
         // GIVEN
         int numberOfSeats = 2;
         String trainId = "TGV2611";
-        BookingReference bookingReference = BookingReference.from("XCLSDDD");
+        BookingReference bookingReference = BookingReference.valueOf("XCLSDDD");
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 0);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
         when(this.bookingReferenceProvider.get()).thenReturn(bookingReference);
         doNothing().when(this.trainDataProvider).register(any());
 
@@ -162,9 +162,9 @@ public class TicketServiceTest {
         // GIVEN
         int numberOfSeats = 2;
         String trainId = "TGV2611";
-        BookingReference bookingReference = BookingReference.from("XCLSDDD");
+        BookingReference bookingReference = BookingReference.valueOf("XCLSDDD");
         TrainSnapshot trainSnapshot = trainSnapshot(trainId, 10, 0);
-        when(this.trainDataProvider.getTrain(trainId)).thenReturn(trainSnapshot);
+        when(this.trainDataProvider.getTrainSnapshot(trainId)).thenReturn(trainSnapshot);
         when(this.bookingReferenceProvider.get()).thenReturn(bookingReference);
 
         // WHEN

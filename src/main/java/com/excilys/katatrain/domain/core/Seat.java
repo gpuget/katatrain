@@ -1,7 +1,11 @@
 package com.excilys.katatrain.domain.core;
 
+import com.excilys.katatrain.domain.annotations.FactoryMethod;
+import com.excilys.katatrain.domain.annotations.ValueObject;
+
 import java.util.Objects;
 
+@ValueObject
 public class Seat {
     private final int number;
     private final String coach;
@@ -13,10 +17,12 @@ public class Seat {
         this.bookingReference = bookingReference;
     }
 
+    @FactoryMethod
     public static Seat reserved(int number, String coach, BookingReference bookingReference) {
         return create(number, coach, bookingReference);
     }
 
+    @FactoryMethod
     public static Seat unreserved(int number, String coach) {
         return create(number, coach, BookingReference.none());
     }

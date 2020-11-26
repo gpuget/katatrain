@@ -6,8 +6,8 @@ public class TrainSnapshotTest extends ValueObjectTest<TrainSnapshot> {
     @Override
     protected TrainSnapshot get() {
         return TrainSnapshot.create("test", Set.of(
-                Seat.reserved(1, "A", BookingReference.from("test")),
-                Seat.reserved(2, "A", BookingReference.from("test")),
+                Seat.reserved(1, "A", BookingReference.valueOf("test")),
+                Seat.reserved(2, "A", BookingReference.valueOf("test")),
                 Seat.unreserved(3, "A"),
                 Seat.unreserved(4, "A"),
                 Seat.unreserved(5, "A"),

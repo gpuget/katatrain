@@ -1,8 +1,14 @@
 package com.excilys.katatrain.domain.core;
 
+import com.excilys.katatrain.domain.annotations.FactoryMethod;
+import com.excilys.katatrain.domain.annotations.NullObject;
+import com.excilys.katatrain.domain.annotations.ValueObject;
+
 import java.util.Objects;
 
+@ValueObject
 public class BookingReference {
+    @NullObject
     private static final BookingReference NONE = new BookingReference("");
 
     private final String reference;
@@ -11,14 +17,15 @@ public class BookingReference {
         this.reference = reference;
     }
 
-    public static BookingReference from(String reference) {
-        Objects.requireNonNull(reference);
-        if (reference.isBlank()) {
+    @FactoryMethod
+    public static BookingReference valueOf(String reference) {
+        if (reference == null || reference.isBlank()) {
             return NONE;
         }
         return new BookingReference(reference);
     }
 
+    @FactoryMethod
     public static BookingReference none() {
         return NONE;
     }

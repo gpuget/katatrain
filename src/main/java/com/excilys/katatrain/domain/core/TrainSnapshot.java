@@ -1,11 +1,14 @@
 package com.excilys.katatrain.domain.core;
 
+import com.excilys.katatrain.domain.annotations.ValueObject;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@ValueObject
 public class TrainSnapshot {
     private static final float RESERVABLE_SEAT_PERCENT = 0.7F;
 
