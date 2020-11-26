@@ -30,21 +30,16 @@ public class TrainSnapshot {
         return new TrainSnapshot(trainId, seats);
     }
 
-    public ReservationSuggestion search(int numberOfSeats) {
-        if (!allowedToReserve(numberOfSeats)) {
-            return ReservationSuggestion.none(numberOfSeats, this.trainId);
-        }
-
-        Set<Seat> selectedSeats = select(numberOfSeats);
-        return ReservationSuggestion.create(numberOfSeats, this.trainId, selectedSeats);
+    public Set<Seat> getReservedSeats() {
+        return reservedSeats;
     }
 
-    private boolean allowedToReserve(int numberOfSeatsToReserve) {
-        return (this.reservedSeats.size() + numberOfSeatsToReserve) <= this.maxReservableSeats;
+    public Set<Seat> getUnreservedSeats() {
+        return unreservedSeats;
     }
 
-    private Set<Seat> select(int number) {
-        return this.unreservedSeats.stream().limit(number).collect(Collectors.toSet());
+    public int getMaxReservableSeats() {
+        return maxReservableSeats;
     }
 
     @Override

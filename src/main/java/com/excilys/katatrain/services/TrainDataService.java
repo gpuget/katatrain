@@ -11,9 +11,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainDataService {
@@ -26,9 +28,10 @@ public class TrainDataService {
         this.objectMapper = objectMapper;
     }
 
-    public TrainSnapshot getTrainSnapshot(String trainId) {
+    public Set<Seat> getUnreservedSeats(int numberOfSeats, String trainId) {
         String json = this.trainDataProvider.getTrain(trainId);
-        return adapt(trainId, json);
+        TrainSnapshot train = adapt(trainId, json);
+        return searchUnreservedSeats(numberOfSeats, train);
     }
 
     private TrainSnapshot adapt(String trainId, String json) {
@@ -49,6 +52,18 @@ public class TrainDataService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Set<Seat> searchUnreservedSeats(int numberOfSeats, TrainSnapshot trainSnapshot) {
+        if (!allowedToReserve(numberOfSeats, trainSnapshot)) {
+            return Collections.emptySet();
+        }
+
+        return trainSnapshot.getUnreservedSeats().stream().limit(numberOfSeats).collect(Collectors.toSet());
+    }
+
+    private boolean allowedToReserve(int numberOfSeatsToReserve, TrainSnapshot trainSnapshot) {
+        return (trainSnapshot.getReservedSeats().size() + numberOfSeatsToReserve) <= trainSnapshot.getMaxReservableSeats();
     }
 
     public void save(Reservation reservation) {
