@@ -23,6 +23,18 @@ public class Reservation {
         return this.seats.size();
     }
 
+    public String getTrainId() {
+        return trainId;
+    }
+
+    public BookingReference getBookingReference() {
+        return bookingReference;
+    }
+
+    public Set<Seat> getSeats() {
+        return seats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
